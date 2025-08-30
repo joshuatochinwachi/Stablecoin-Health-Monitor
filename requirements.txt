@@ -1,0 +1,7 @@
+requests           # For API calls (CoinGecko, Etherscan)
+pandas             # For data manipulation and analysis
+matplotlib         # For plotting and visualization
+python-dotenv      # For loading environment variables from .env
+jupyter            # For running Jupyter Notebooks
+beautifulsoup4     # For web scraping (reserve news, stretch goal)
+lxml               # HTML/XML parsing for BeautifulSoup
