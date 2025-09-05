@@ -147,12 +147,21 @@ st.markdown("""
 
 # API Configuration with 24-hour caching to preserve API credits
 @st.cache_data(ttl=86400)  # Cache for 24 hours
+# New way for Streamlit Cloud
 def get_api_keys():
-    """Get API keys from environment variables"""
-    keys = {
-        'coingecko': os.getenv("COINGECKO_PRO_API_KEY"),
-        'dune': os.getenv("DEFI_JOSH_DUNE_QUERY_API_KEY")
-    }
+    """Get API keys from environment variables or Streamlit secrets"""
+    try:
+        # Try Streamlit secrets first (for cloud deployment)
+        keys = {
+            'coingecko': st.secrets.get("COINGECKO_PRO_API_KEY"),
+            'dune': st.secrets.get("DEFI_JOSH_DUNE_QUERY_API_KEY")
+        }
+    except:
+        # Fallback to environment variables (for local development)
+        keys = {
+            'coingecko': os.getenv("COINGECKO_PRO_API_KEY"),
+            'dune': os.getenv("DEFI_JOSH_DUNE_QUERY_API_KEY")
+        }
     return keys
 
 # Data fetching functions
