@@ -11,7 +11,7 @@ Features:
 - Supply trend monitoring
 - Professional UI with enhanced visualizations
 
-Author: Your Name
+Author: Jo$h
 Date: 2025
 """
 
@@ -406,7 +406,7 @@ with st.sidebar:
     st.markdown("""
     ### Are stablecoins truly stable? 🤔
     
-    **The Reality:** Stablecoins promise $1.00 stability but face constant market pressures.
+    In reality, Stablecoins promise $1.00 stability but face constant market pressures.
     
     **How They Maintain Peg:**
     - 📈 **Above $1:** New tokens minted → Supply increases
@@ -418,16 +418,16 @@ with st.sidebar:
     - **🆕 Hybrid:** FRAX (partial collateral)
     
     ---
-    
-    ### 📊 What We Track:
-    
+
+    ### 📊 This dashboard Tracks:
+
     **🎯 Peg Stability**
     - Real-time deviation from $1.00
     - Historical volatility analysis
     - Stability trend monitoring
     
     **📦 Supply Dynamics**  
-    - On-chain mint/burn activity
+    - On-chain mint/burn activity. Check [Dune dashboard](https://dune.com/defi__josh/stablecoin-health-monitor) for historical mint/burn and supply trends of each of these stablecoins.
     - Market cap fluctuations
     - Concentration analysis
     
@@ -452,7 +452,7 @@ with st.sidebar:
                 padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
         <p style="color: white; margin: 0; font-weight: 600;">🔄 Data Updates</p>
         <p style="color: #E0E0E0; margin: 5px 0 0 0; font-size: 0.85em;">Every 24 hours</p>
-        <p style="color: #E0E0E0; margin: 0; font-size: 0.8em;">Preserves API credits</p>
+        <p style="color: #E0E0E0; margin: 0; font-size: 0.8em;"> </p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1008,7 +1008,7 @@ elif section == "On-Chain Activity":
     st.markdown("## ⛓️ On-Chain Supply Dynamics")
     
     if not dune_supply_data.empty:
-        st.markdown("### 📊 Historical Supply Trends from Ethereum")
+        st.markdown("### 📊 Historical Supply Trends on Ethereum")
         
         # Process the supply data for better visualization
         supply_columns = [col for col in dune_supply_data.columns if 'supply' in col.lower()]
