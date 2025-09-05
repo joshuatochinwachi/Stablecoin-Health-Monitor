@@ -151,7 +151,7 @@ def get_api_keys():
     """Get API keys from environment variables"""
     keys = {
         'coingecko': os.getenv("COINGECKO_PRO_API_KEY"),
-        'dune': "O8qD0ukJ88qUCa3zS28WC2HNKpRtVxEM"  # os.getenv("DEFI_JOSH_DUNE_QUERY_API_KEY")
+        'dune': os.getenv("DEFI_JOSH_DUNE_QUERY_API_KEY")
     }
     return keys
 
