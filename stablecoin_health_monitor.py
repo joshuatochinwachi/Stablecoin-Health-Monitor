@@ -148,29 +148,11 @@ st.markdown("""
 # API Configuration with 24-hour caching to preserve API credits
 @st.cache_data(ttl=86400)  # Cache for 24 hours
 def get_api_keys():
-    """Get API keys from environment variables or Streamlit secrets"""
-    keys = {'coingecko': None, 'dune': None}
-    
-    # Try Streamlit secrets first (for cloud deployment)
-    try:
-        if hasattr(st, 'secrets'):
-            try:
-                keys['coingecko'] = st.secrets["COINGECKO_PRO_API_KEY"]
-            except:
-                pass
-            try:
-                keys['dune'] = st.secrets["DEFI_JOSH_DUNE_QUERY_API_KEY"]
-            except:
-                pass
-    except:
-        pass
-    
-    # Fallback to environment variables
-    if not keys['coingecko']:
-        keys['coingecko'] = os.getenv("COINGECKO_PRO_API_KEY")
-    if not keys['dune']:
-        keys['dune'] = os.getenv("DEFI_JOSH_DUNE_QUERY_API_KEY")
-    
+    """Get API keys from environment variables"""
+    keys = {
+        'coingecko': os.getenv("COINGECKO_PRO_API_KEY"),
+        'dune': os.getenv("DEFI_JOSH_DUNE_QUERY_API_KEY")
+    }
     return keys
 
 # Data fetching functions
@@ -221,40 +203,33 @@ def fetch_stablecoin_data():
 def fetch_dune_supply_data():
     """Fetch on-chain supply data from Dune Analytics"""
     api_keys = get_api_keys()
-    dune_api_key = api_keys['dune']
-    
-    if not dune_api_key:
-        st.error("Dune API key not found. Please check your configuration.")
+    if not api_keys['dune']:
+        st.warning("Dune API key not found. Please check your .env file.")
         return pd.DataFrame()
     
     try:
         from dune_client.client import DuneClient
         
         with st.spinner("Fetching on-chain supply data from Dune Analytics..."):
-            dune = DuneClient(dune_api_key)
+            dune = DuneClient(api_keys['dune'])
             query_result = dune.get_latest_result(5681885)
             
-            if query_result and query_result.result:
-                rows = query_result.result.rows
-                if rows:
-                    df = pd.DataFrame(rows)
-                    
-                    # Process the data
-                    if 'week' in df.columns:
-                        df['week'] = pd.to_datetime(df['week'])
-                        df = df.sort_values('week', ascending=False)
-                    
-                    return df
-                else:
-                    st.error("Dune query returned no data rows")
+            if query_result and query_result.result and query_result.result.rows:
+                df = pd.DataFrame(query_result.result.rows)
+                
+                # Process the data
+                if 'week' in df.columns:
+                    df['week'] = pd.to_datetime(df['week'])
+                    df = df.sort_values('week', ascending=False)
+                
+                return df
             else:
-                st.error("No data returned from Dune query")
+                st.warning("No data returned from Dune query")
+                return pd.DataFrame()
                 
     except Exception as e:
         st.error(f"Error fetching Dune data: {str(e)}")
         return pd.DataFrame()
-    
-    return pd.DataFrame()
 
 @st.cache_data(ttl=86400)  # 24-hour cache
 def fetch_dominance_data():
