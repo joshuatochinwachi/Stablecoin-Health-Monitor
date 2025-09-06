@@ -54,6 +54,11 @@ def set_cached_data(cache_key, data):
 # Load environment variables
 load_dotenv()
 
+try:
+    st.cache_data.clear()
+except:
+    pass
+
 # Page configuration
 st.set_page_config(
     page_title="Stablecoin Health Monitor", 
