@@ -29,23 +29,28 @@ from dotenv import load_dotenv
 import time
 
 # Global cache to prevent API calls on every visitor
+import threading
 _GLOBAL_CACHE = {}
 _CACHE_TTL = 86400  # 24 hours
+_cache_lock = threading.Lock()
 
 def is_cache_valid(cache_key):
-    if cache_key not in _GLOBAL_CACHE:
-        return False
-    cache_time, _ = _GLOBAL_CACHE[cache_key]
-    return time.time() - cache_time < _CACHE_TTL
+    with _cache_lock:
+        if cache_key not in _GLOBAL_CACHE:
+            return False
+        cache_time, _ = _GLOBAL_CACHE[cache_key]
+        return time.time() - cache_time < _CACHE_TTL
 
 def get_cached_data(cache_key):
-    if is_cache_valid(cache_key):
-        _, data = _GLOBAL_CACHE[cache_key]
-        return data
-    return None
+    with _cache_lock:
+        if is_cache_valid(cache_key):
+            _, data = _GLOBAL_CACHE[cache_key]
+            return data
+        return None
 
 def set_cached_data(cache_key, data):
-    _GLOBAL_CACHE[cache_key] = (time.time(), data)
+    with _cache_lock:
+        _GLOBAL_CACHE[cache_key] = (time.time(), data)
 # Load environment variables
 load_dotenv()
 
@@ -190,11 +195,9 @@ def fetch_stablecoin_data():
     api_keys = get_api_keys()
     if api_keys['coingecko']:
         try:
-            with st.spinner("Fetching fresh market data..."):
-                df = _fetch_fresh_coingecko_data(api_keys['coingecko'])
-                if not df.empty:
-                    # st.success("Fresh data loaded from CoinGecko Pro")
-                    return df
+            df = _fetch_fresh_coingecko_data(api_keys['coingecko'])
+            if not df.empty:
+                return df
         except Exception as e:
             pass
     
