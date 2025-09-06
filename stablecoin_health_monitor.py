@@ -174,7 +174,7 @@ def fetch_stablecoin_data():
             with st.spinner("Fetching fresh market data..."):
                 df = _fetch_fresh_coingecko_data(api_keys['coingecko'])
                 if not df.empty:
-                    st.success("Fresh data loaded from CoinGecko Pro")
+                    # st.success("Fresh data loaded from CoinGecko Pro")
                     return df
         except Exception as e:
             st.warning(f"API temporarily unavailable: {str(e)[:50]}...")
@@ -259,7 +259,7 @@ def fetch_dune_supply_data():
                     df['week'] = pd.to_datetime(df['week'])
                     df = df.sort_values('week', ascending=False)
                 
-                st.success("Fresh on-chain data loaded")
+                # st.success("Fresh on-chain data loaded")
                 return df
             else:
                 st.warning("No data returned from Dune query")
@@ -1230,10 +1230,20 @@ elif section == "On-Chain Activity":
 
 # Footer
 st.markdown("---")
+# Get actual data timestamps
+stablecoin_df = fetch_stablecoin_data()
+last_data_update = "No fresh data"
+if not stablecoin_df.empty and 'last_updated' in stablecoin_df.columns:
+    try:
+        last_update_time = pd.to_datetime(stablecoin_df['last_updated'].iloc[0])
+        last_data_update = last_update_time.strftime('%Y-%m-%d %H:%M UTC')
+    except:
+        last_data_update = "Data timestamp unavailable"
+
 st.markdown(f"""
 <div style="text-align: center; color: #888; padding: 20px;">
     <p>📊 <strong>Stablecoin Health Monitor</strong> | Real-time data from CoinGecko Pro API & Dune Analytics</p>
-    <p>⚡ Cache: 24 hours | 🔄 Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}</p>
+    <p>⚡ Cache: 24 hours | 🔄 Data last updated: {last_data_update}</p>
     <p style="font-size: 0.9em;">💡 Remember: Past performance doesn't guarantee future stability</p>
     <p style="font-size: 0.8em;">🛠️ Built with Streamlit • Plotly • CoinGecko Pro API • Dune Analytics</p>
 </div>
