@@ -26,7 +26,26 @@ import os
 from datetime import datetime, timedelta
 import joblib
 from dotenv import load_dotenv
+import time
 
+# Global cache to prevent API calls on every visitor
+_GLOBAL_CACHE = {}
+_CACHE_TTL = 86400  # 24 hours
+
+def is_cache_valid(cache_key):
+    if cache_key not in _GLOBAL_CACHE:
+        return False
+    cache_time, _ = _GLOBAL_CACHE[cache_key]
+    return time.time() - cache_time < _CACHE_TTL
+
+def get_cached_data(cache_key):
+    if is_cache_valid(cache_key):
+        _, data = _GLOBAL_CACHE[cache_key]
+        return data
+    return None
+
+def set_cached_data(cache_key, data):
+    _GLOBAL_CACHE[cache_key] = (time.time(), data)
 # Load environment variables
 load_dotenv()
 
@@ -523,12 +542,11 @@ section = st.radio(
     key="nav_radio"
 )
 
-# Load all data with better error handling
-with st.spinner("🔄 Loading comprehensive market data..."):
-    stablecoin_df = fetch_stablecoin_data()
-    dominance_df = fetch_dominance_data()
-    historical_peg_data = fetch_historical_peg_data()
-    dune_supply_data = fetch_dune_supply_data()
+# Load all data silently
+stablecoin_df = fetch_stablecoin_data()
+dominance_df = fetch_dominance_data()
+historical_peg_data = fetch_historical_peg_data()
+dune_supply_data = fetch_dune_supply_data()
 
 # Generate market insights
 market_insights = create_market_insights(stablecoin_df, dominance_df)
