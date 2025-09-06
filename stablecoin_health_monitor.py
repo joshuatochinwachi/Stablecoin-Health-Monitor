@@ -182,7 +182,7 @@ def fetch_stablecoin_data():
     # Layer 2: Use embedded backup data
     backup_df = _get_embedded_backup_data()
     if not backup_df.empty:
-        st.info("Using backup data (reliable but may be slightly outdated)")
+        # st.info("Using backup data (reliable but may be slightly outdated)")
         return backup_df
     
     # Layer 3: Return empty (should never happen)
@@ -241,8 +241,8 @@ def fetch_dune_supply_data():
     api_keys = get_api_keys()
     
     if not api_keys['dune']:
-        st.warning("Dune API not configured - on-chain data unavailable")
-        st.info("Add your Dune API key in Streamlit secrets to enable supply analysis")
+        # st.warning("Dune API not configured - on-chain data unavailable")
+        # st.info("Add your Dune API key in Streamlit secrets to enable supply analysis")
         return pd.DataFrame()
     
     try:
@@ -262,7 +262,7 @@ def fetch_dune_supply_data():
                 # st.success("Fresh on-chain data loaded")
                 return df
             else:
-                st.warning("No data returned from Dune query")
+                # st.warning("No data returned from Dune query")
                 return pd.DataFrame()
     
     except ImportError:
