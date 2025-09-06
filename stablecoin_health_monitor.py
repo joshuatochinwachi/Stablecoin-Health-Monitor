@@ -177,7 +177,7 @@ def fetch_stablecoin_data():
                     # st.success("Fresh data loaded from CoinGecko Pro")
                     return df
         except Exception as e:
-            st.warning(f"API temporarily unavailable: {str(e)[:50]}...")
+            pass
     
     # Layer 2: Use embedded backup data
     backup_df = _get_embedded_backup_data()
@@ -186,7 +186,7 @@ def fetch_stablecoin_data():
         return backup_df
     
     # Layer 3: Return empty (should never happen)
-    st.error("No data sources available")
+    pass
     return pd.DataFrame()
 
 def _fetch_fresh_coingecko_data(api_key: str) -> pd.DataFrame:
@@ -266,10 +266,10 @@ def fetch_dune_supply_data():
                 return pd.DataFrame()
     
     except ImportError:
-        st.error("Dune client not installed. Add 'dune-client' to requirements.txt")
+        pass
         return pd.DataFrame()
     except Exception as e:
-        st.warning(f"Dune API error: {str(e)[:100]}...")
+        pass
         return pd.DataFrame()
 
 @st.cache_data(ttl=86400)  # 24-hour cache
@@ -348,7 +348,7 @@ def fetch_historical_peg_data():
                 df["peg_deviation_pct"] = (df["price"] - 1) * 100
                 historical_data[symbol] = df
         except Exception as e:
-            st.warning(f"Could not fetch historical data for {symbol}")
+            pass
     
     return historical_data
 
