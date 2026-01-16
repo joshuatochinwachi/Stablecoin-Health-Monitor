@@ -212,8 +212,11 @@ def fetch_stablecoin_data():
     return pd.DataFrame()
 
 def _fetch_fresh_coingecko_data(api_key: str) -> pd.DataFrame:
-    """Core API fetching logic"""
-    url = "https://pro-api.coingecko.com/api/v3/coins/markets"
+    """Core API fetching logic - Updated for FREE API"""
+    
+    # Use FREE API endpoint (not pro-api)
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    
     params = {
         "vs_currency": "usd",
         "category": "stablecoins",
@@ -223,8 +226,10 @@ def _fetch_fresh_coingecko_data(api_key: str) -> pd.DataFrame:
         "sparkline": False,
         "price_change_percentage": "24h,7d,30d"
     }
+    
+    # Use FREE API header (x-cg-demo-api-key instead of x-cg-pro-api-key)
     headers = {
-        "x-cg-pro-api-key": api_key,
+        "x-cg-demo-api-key": api_key,  # CHANGED: Free tier header
         "User-Agent": "StablecoinHealthMonitor/2.0"
     }
     
@@ -307,8 +312,12 @@ def fetch_dominance_data():
     api_keys = get_api_keys()
     if api_keys['coingecko']:
         try:
-            global_url = "https://pro-api.coingecko.com/api/v3/global"
-            headers = {"x-cg-pro-api-key": api_keys['coingecko']}
+            # Use FREE API endpoint
+            global_url = "https://api.coingecko.com/api/v3/global"  # CHANGED: removed 'pro-api'
+            
+            # Use FREE API header
+            headers = {"x-cg-demo-api-key": api_keys['coingecko']}  # CHANGED: Free tier header
+            
             response = requests.get(global_url, headers=headers, timeout=15)
             global_data = response.json()
             total_market_cap = global_data['data']['total_market_cap']['usd']
@@ -353,11 +362,15 @@ def fetch_historical_peg_data():
     }
     
     historical_data = {}
-    headers = {"x-cg-pro-api-key": api_keys['coingecko']}
+    
+    # Use FREE API header
+    headers = {"x-cg-demo-api-key": api_keys['coingecko']}  # CHANGED: Free tier header
     
     for symbol, coin_id in coingecko_ids.items():
         try:
-            url = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
+            # Use FREE API endpoint
+            url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"  # CHANGED: removed 'pro-api'
+            
             params = {"vs_currency": "usd", "days": 30}
             response = requests.get(url, params=params, headers=headers, timeout=15)
             data = response.json()
